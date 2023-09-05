@@ -1,26 +1,33 @@
-void setup()
-{
-  // initialize serial communication at 9600 bits per second:
+const byte MAXIMUM_INPUT_LENGTH = 15;
+const char PKG_START = '<';
+const char PKG_END = '>';
+
+String input = "";
+
+void setup() {
   Serial.begin(9600);
 }
 
-// the loop routine runs over and over again forever:
-void loop()
-{
-  if (Serial.available() > 0)
-  {
-    // read the incoming byte:
-    int incomingByte = Serial.read();
-    // say what you got:
-    char byteString[10];
+void loop() {
+  input = "";
 
-    // Convert the incoming byte to a string
-    snprintf(byteString, sizeof(byteString), "%d", incomingByte);
+  // Wait for the start marker
+  while (Serial.available() && Serial.read() != PKG_START);
 
-    // say what you got as a string:
-    Serial.print("I received: ");
-    Serial.println(byteString);
+  // Read the input until the end marker or maximum length is reached
+  char currentInput;
+  unsigned long startTime = millis();
+  while (millis() - startTime < 1000) { // Timeout after 1 second
+    if (Serial.available()) {
+      currentInput = Serial.read();
+      if (currentInput == PKG_END || input.length() >= MAXIMUM_INPUT_LENGTH) {
+        break; // Exit the loop when the end marker is found or max length reached
+      }
+      input += currentInput;
+    }
   }
 
-  delay(1); // delay in between reads for stability
+  // Print the received input
+  Serial.print("Received input: ");
+  Serial.println(input);
 }
