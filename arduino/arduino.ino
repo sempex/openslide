@@ -37,7 +37,6 @@ void loop() {
     }
 
     // Print the received input
-    Serial.print("Received input: ");
     Serial.println(input);
   }
 }

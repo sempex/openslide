@@ -43,8 +43,8 @@ export default function Home() {
   const send = async () => {
     const encoder = new TextEncoder();
 
-    // Send "Hello, World!" to the serial port
-    const message = "Hello, World!";
+    // Modify your message to include the start and end markers
+    const message = "<Hello>";
     const data = encoder.encode(message);
 
     const writer = port?.writable?.getWriter();
