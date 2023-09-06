@@ -1,5 +1,6 @@
 "use client";
 
+import { PKG_END, PKG_START } from "@/lib/constants";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -26,11 +27,11 @@ export default function Home() {
       for (let i = 0; i < stringValue.length; i++) {
         const currentChar = stringValue[i];
 
-        if (currentChar === "<") {
+        if (currentChar === PKG_START) {
           // Start marker found, reset the message
           message = "";
           startMarkerFound = true;
-        } else if (currentChar === ">" && startMarkerFound) {
+        } else if (currentChar === PKG_END && startMarkerFound) {
           // End marker found, process the message
           console.log("Received message:", message);
           startMarkerFound = false;
