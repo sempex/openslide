@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [port, setPort] = useState<SerialPort | null>(null);
+  const [message, setMessage] = useState<string>("");
 
-  const listen = async (
-    reader:
-      | ReadableStreamDefaultReader<string>
-      | ReadableStreamDefaultReader<Uint8Array>
-  ) => {
+  const listen = async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
+    let message = "";
+    let startMarkerFound = false;
+
     while (true) {
       const { value, done } = await reader.read();
       if (done) {
@@ -18,10 +18,32 @@ export default function Home() {
         reader.releaseLock();
         break;
       }
-      // value is a Uint8Array.
-      console.log(value);
+
+      // Convert the received Uint8Array to a string
+      const stringValue = new TextDecoder().decode(value);
+
+      // Process each character in the received data
+      for (let i = 0; i < stringValue.length; i++) {
+        const currentChar = stringValue[i];
+
+        if (currentChar === "<") {
+          // Start marker found, reset the message
+          message = "";
+          startMarkerFound = true;
+        } else if (currentChar === ">" && startMarkerFound) {
+          // End marker found, process the message
+          console.log("Received message:", message);
+          startMarkerFound = false;
+        } else if (startMarkerFound) {
+          // Append the character to the message
+          message += currentChar;
+        }
+
+        setMessage(message);
+      }
     }
   };
+
   const connect = async () => {
     const filters: SerialPortRequestOptions["filters"] = [];
 
@@ -33,9 +55,7 @@ export default function Home() {
 
     await port.open({ baudRate: 9600 });
 
-    const textDecoder = new TextDecoderStream();
-    const readableStreamClosed = port.readable?.pipeTo(textDecoder.writable);
-    const reader = textDecoder.readable.getReader();
+    const reader = port.readable?.getReader();
 
     if (reader) listen(reader);
   };
@@ -92,6 +112,8 @@ export default function Home() {
       >
         Send IT
       </button>
+
+      {message}
     </main>
   );
 }
