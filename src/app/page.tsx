@@ -1,12 +1,17 @@
 "use client";
 
+import SetButton from "@/components/SetButton";
+import Slider from "@/components/Slider";
 import { PKG_END, PKG_START } from "@/lib/constants";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { GrConnect } from "react-icons/gr";
+import { PiPlugsConnectedDuotone } from "react-icons/pi";
 
 export default function Home() {
   const [port, setPort] = useState<SerialPort | null>(null);
   const [message, setMessage] = useState<string>("");
+  const [connected, setConnected] = useState<boolean>(false);
 
   const listen = async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
     let message = "";
@@ -50,6 +55,7 @@ export default function Home() {
 
     // Prompt user to select an Arduino Uno device.
     const port = await navigator.serial.requestPort({ filters });
+    setConnected(true);
 
     setPort(port);
     // await port.close();
@@ -97,24 +103,39 @@ export default function Home() {
     };
   });
 
+  const [sliderValue, setSliderValue] = useState<string>("");
+  console.log(sliderValue);
   return (
     <main className="flex gap-2 p-24">
-      <button
-        className="bg-orange-400 text-black font-bold rounded-lg px-3 py-2 disabled:opacity-50"
-        onClick={connect}
-        disabled={!!port}
-      >
-        Connect
-      </button>
-      <button
-        className="bg-orange-400 text-black font-bold rounded-lg px-3 py-2  disabled:opacity-50"
-        onClick={send}
-        disabled={!port}
-      >
-        Send IT
-      </button>
+      <div className="space-y-10">
+        <div className="space-x-3">
+          <button
+            className="bg-orange-400 text-black font-bold rounded-lg px-3 py-2 h-10 disabled:opacity-50"
+            onClick={connect}
+            disabled={!!port}
+          >
+            {connected ? <PiPlugsConnectedDuotone /> : <GrConnect />}
+          </button>
+          <button
+            onClick={send}
+            className="bg-orange-400 text-black font-bold rounded-lg px-3 py-2 h-10 disabled:opacity-50"
+            disabled={!port}
+          >
+            Send IT
+          </button>
+        </div>
+        <div className="flex flex-col items-center justify-center rounded-lg bg-[#363640] p-24">
+          <div className="flex flex-col items-center space-y-6">
+            <Slider sliderValue={sliderValue} setSliderValue={setSliderValue} />
+            <div className="flex space-x-6">
+              <SetButton buttonValue="Set StartPoint" />
+              <SetButton buttonValue="Set EndPoint" />
+            </div>
+          </div>
+        </div>
 
-      {message}
+        {message}
+      </div>
     </main>
   );
 }
