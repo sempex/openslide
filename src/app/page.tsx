@@ -8,7 +8,11 @@ import { PKG_END, PKG_START } from "@/lib/constants";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { GrConnect } from "react-icons/gr";
-import { PiPlugsConnectedDuotone } from "react-icons/pi";
+import {
+  PiPlugsConnectedDuotone,
+  PiPlugsConnectedLight,
+  PiPlugsLight,
+} from "react-icons/pi";
 import { FiPlay } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
@@ -132,10 +136,14 @@ export default function Home() {
             </span>
           </div>
           <Button onClick={connect} disabled={!!port} variant={"secondary"}>
-            {connected ? <PiPlugsConnectedDuotone /> : <GrConnect />}
+            {connected ? (
+              <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
+            ) : (
+              <PiPlugsLight className="text-white text-xl stroke-2" />
+            )}
           </Button>
         </div>
-        <Card className="flex flex-col items-center justify-center p-5 sm:p-8 w-full">
+        <Card className="flex flex-col items-center justify-center p-5 sm:p-8 w-full ">
           <div className="flex flex-col items-center space-y-6 w-full">
             <Slider
               onValueChange={(v) => setSliderValue(v)}
