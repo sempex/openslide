@@ -1,17 +1,22 @@
 "use client";
 
 import SetButton from "@/components/SetButton";
-import Slider from "@/components/Slider";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+// import Slider from "@/components/Slider";
 import { PKG_END, PKG_START } from "@/lib/constants";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { GrConnect } from "react-icons/gr";
 import { PiPlugsConnectedDuotone } from "react-icons/pi";
+import { FiPlay } from "react-icons/fi";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const [port, setPort] = useState<SerialPort | null>(null);
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
+  const [sliderValue, setSliderValue] = useState<number[]>([10, 100]);
 
   const listen = async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
     let message = "";
@@ -85,6 +90,12 @@ export default function Home() {
     writer.releaseLock();
   };
 
+  const disconnect = async () => {
+    await port?.close();
+    setPort(null);
+    setConnected(false);
+  }
+
   useEffect(() => {
     navigator.serial.addEventListener("connect", (e) => {
       console.log(e);
@@ -103,37 +114,46 @@ export default function Home() {
     };
   });
 
-  const [sliderValue, setSliderValue] = useState<string>("");
   console.log(sliderValue);
   return (
-    <main className="flex gap-2 p-24">
-      <div className="space-y-10">
-        <div className="space-x-3">
-          <button
-            className="bg-orange-400 text-black font-bold rounded-lg px-3 py-2 h-10 disabled:opacity-50"
-            onClick={connect}
-            disabled={!!port}
-          >
+    <main className="flex gap-2 p-4 sm:p-24">
+      <div className="space-y-5 sm:w-96 w-full">
+        <div>
+          <div className="flex items-center gap-1 p-2 w-fit rounded-xl">
+            <div
+              className={cn(
+                "w-2 h-2 rounded-full",
+                port ? "bg-green-400" : "bg-neutral-300"
+              )}
+            ></div>
+            <span className="text-muted-foreground text-sm">
+              {port ? "Connected" : "Disconnected"}
+            </span>
+          </div>
+          <Button onClick={connect} disabled={!!port} variant={"secondary"}>
             {connected ? <PiPlugsConnectedDuotone /> : <GrConnect />}
-          </button>
-          <button
-            onClick={send}
-            className="bg-orange-400 text-black font-bold rounded-lg px-3 py-2 h-10 disabled:opacity-50"
-            disabled={!port}
-          >
-            Send IT
-          </button>
+          </Button>
         </div>
-        <div className="flex flex-col items-center justify-center rounded-lg bg-[#363640] p-24">
-          <div className="flex flex-col items-center space-y-6">
-            <Slider sliderValue={sliderValue} setSliderValue={setSliderValue} />
+        <div className="flex flex-col items-center justify-center rounded-lg bg-neutral-900 p-5 sm:p-8 w-full">
+          <div className="flex flex-col items-center space-y-6 w-full">
+            {/* <Slider sliderValue={sliderValue} setSliderValue={setSliderValue} /> */}
+            <Slider
+              onValueChange={(v) => setSliderValue(v)}
+              value={sliderValue}
+              defaultValue={[10, 20]}
+              min={0}
+              max={100}
+              className="w-full"
+            />
             <div className="flex space-x-6">
-              <SetButton buttonValue="Set StartPoint" />
-              <SetButton buttonValue="Set EndPoint" />
+              {/* <SetButton buttonValue="Set StartPoint" />
+              <SetButton buttonValue="Set EndPoint" /> */}
+              <Button onClick={send}>
+                <FiPlay className="fill-white" />
+              </Button>
             </div>
           </div>
         </div>
-
         {message}
       </div>
     </main>
