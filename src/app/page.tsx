@@ -137,7 +137,6 @@ export default function Home() {
         </div>
         <Card className="flex flex-col items-center justify-center p-5 sm:p-8 w-full">
           <div className="flex flex-col items-center space-y-6 w-full">
-            {/* <Slider sliderValue={sliderValue} setSliderValue={setSliderValue} /> */}
             <Slider
               onValueChange={(v) => setSliderValue(v)}
               value={sliderValue}
@@ -147,8 +146,6 @@ export default function Home() {
               className="w-full"
             />
             <div className="flex space-x-6">
-              {/* <SetButton buttonValue="Set StartPoint" />
-              <SetButton buttonValue="Set EndPoint" /> */}
               <Button onClick={send}>
                 <FiPlay className="fill-white" />
               </Button>
