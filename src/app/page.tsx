@@ -95,7 +95,7 @@ export default function Home() {
     await port?.close();
     setPort(null);
     setConnected(false);
-  }
+  };
 
   useEffect(() => {
     navigator.serial.addEventListener("connect", (e) => {
@@ -147,7 +147,7 @@ export default function Home() {
             />
             <div className="flex space-x-6">
               <Button onClick={send}>
-                <FiPlay className="fill-white" />
+                <FiPlay />
               </Button>
             </div>
           </div>
