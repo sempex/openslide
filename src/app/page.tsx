@@ -106,7 +106,8 @@ export default function Home() {
       console.log(e);
     });
     navigator.serial.addEventListener("disconnect", (e) => {
-      console.log(e);
+      console.log("oh nei", e);
+      setPort(null);
     });
 
     return () => {
