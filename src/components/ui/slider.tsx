@@ -21,7 +21,16 @@ const Slider = React.forwardRef<
       <SliderPrimitive.Range className={cn("absolute h-full bg-[#2563EB]")} />
     </SliderPrimitive.Track>
     {props.defaultValue?.map((value, i) => {
-      return <SliderPrimitive.Thumb key={i} className="block h-5 w-5 rounded-full border-2 border-primar bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" />;
+      return (
+        <SliderPrimitive.Thumb
+          key={i}
+          className="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        >
+          <span className="text-xs inset-0 absolute flex justify-center items-center text-primary font-bold">
+            {i + 1}
+          </span>
+        </SliderPrimitive.Thumb>
+      );
     })}
   </SliderPrimitive.Root>
 ));
