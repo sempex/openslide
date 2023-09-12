@@ -22,7 +22,7 @@ export default function Home() {
   const [port, setPort] = useState<SerialPort | null>(null);
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
-  const [sliderValue, setSliderValue] = useState<number[]>([10, 100]);
+  const [sliderValue, setSliderValue] = useState<number[]>([0, 100]);
 
   const listen = async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
     let message = "";
