@@ -16,6 +16,7 @@ import {
 import { FiPlay } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
+import { time, timeStamp } from "console";
 
 export default function Home() {
   const [port, setPort] = useState<SerialPort | null>(null);
@@ -123,7 +124,7 @@ export default function Home() {
   console.log(sliderValue);
   return (
     <main className="flex gap-2 p-4 sm:p-24">
-      <div className="space-y-5 sm:w-96 w-full">
+      <div className="space-y-5 sm:w-96">
         <div>
           <div className="flex items-center gap-1 p-2 w-fit rounded-xl">
             <div
@@ -136,7 +137,7 @@ export default function Home() {
               {port ? "Connected" : "Disconnected"}
             </span>
           </div>
-          <Button onClick={connect} disabled={!!port} variant={"secondary"}>
+          <Button onClick={connect} disabled={!!port} variant={"secondary"} className="bg-[#2563EB] drop-shadow-md">
             {connected ? (
               <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
             ) : (
@@ -144,23 +145,28 @@ export default function Home() {
             )}
           </Button>
         </div>
-        <Card className="flex flex-col items-center justify-center p-5 sm:p-8 w-full ">
-          <div className="flex flex-col items-center space-y-6 w-full">
-            <Slider
-              onValueChange={(v) => setSliderValue(v)}
-              value={sliderValue}
-              defaultValue={[10, 20]}
-              min={0}
-              max={100}
-              className="w-full"
-            />
-            <div className="flex space-x-6">
-              <Button onClick={send}>
-                <FiPlay />
-              </Button>
+        <div className="flex  gap-10 w-screen">
+          <Card className="flex flex-col items-center justify-center p-5 sm:p-8 w-full border-[#1E293B] w-1/2">
+            <div className="flex flex-col items-center space-y-6 w-full">
+              <Slider
+                onValueChange={(v) => setSliderValue(v)}
+                value={sliderValue}
+                defaultValue={[10, 20]}
+                min={0}
+                max={100}
+                className="w-full "
+              />
+              <div className="flex space-x-6">
+                <Button onClick={send} className="bg-[#2563EB]">
+                  <FiPlay />
+                </Button>
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+          <Card className="w-1/3 border-[#1E293B] p-2">
+            <p className="font-mono">connected to arduino</p>
+          </Card>
+        </div>
         {message}
       </div>
     </main>
