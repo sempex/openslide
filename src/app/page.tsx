@@ -123,52 +123,55 @@ export default function Home() {
 
   console.log(sliderValue);
   return (
-    <main className="flex gap-2 p-4 sm:p-24">
-      <div className="space-y-5 sm:w-96">
-        <div>
-          <div className="flex items-center gap-1 p-2 w-fit rounded-xl">
-            <div
-              className={cn(
-                "w-2 h-2 rounded-full",
-                port ? "bg-green-400" : "bg-neutral-300"
-              )}
-            ></div>
-            <span className="text-muted-foreground text-sm">
-              {port ? "Connected" : "Disconnected"}
-            </span>
-          </div>
-          <Button onClick={connect} disabled={!!port} variant={"secondary"} className="bg-[#2563EB] drop-shadow-md">
-            {connected ? (
-              <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
-            ) : (
-              <PiPlugsLight className="text-white text-xl stroke-2" />
+    <main className="p-4 sm:p-24 w-full">
+      <div className="mb-5">
+        <div className="flex items-center gap-1 p-2 w-fit rounded-xl">
+          <div
+            className={cn(
+              "w-2 h-2 rounded-full",
+              port ? "bg-green-400" : "bg-neutral-300"
             )}
-          </Button>
+          ></div>
+          <span className="text-muted-foreground text-sm">
+            {port ? "Connected" : "Disconnected"}
+          </span>
         </div>
-        <div className="flex  gap-10 w-screen">
-          <Card className="flex flex-col items-center justify-center p-5 sm:p-8 w-full border-[#1E293B] w-1/2">
-            <div className="flex flex-col items-center space-y-6 w-full">
-              <Slider
-                onValueChange={(v) => setSliderValue(v)}
-                value={sliderValue}
-                defaultValue={[10, 20]}
-                min={0}
-                max={100}
-                className="w-full "
-              />
-              <div className="flex space-x-6">
-                <Button onClick={send} className="bg-[#2563EB]">
-                  <FiPlay />
-                </Button>
-              </div>
-            </div>
-          </Card>
-          <Card className="w-1/3 border-[#1E293B] p-2">
-            <p className="font-mono">connected to arduino</p>
-          </Card>
-        </div>
-        {message}
+        <Button
+          onClick={connect}
+          disabled={!!port}
+          variant={"secondary"}
+          className="drop-shadow-md"
+        >
+          {connected ? (
+            <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
+          ) : (
+            <PiPlugsLight className="text-white text-xl stroke-2" />
+          )}
+        </Button>
       </div>
+      <div className="grid grid-cols-3 gap-10 w-full">
+        <Card className="flex flex-col items-center justify-center p-5 sm:p-8 col-span-2">
+          <div className="flex flex-col items-center space-y-6 w-full">
+            <Slider
+              onValueChange={(v) => setSliderValue(v)}
+              value={sliderValue}
+              defaultValue={[10, 20]}
+              min={0}
+              max={100}
+              className="w-full "
+            />
+            <div className="flex space-x-6">
+              <Button onClick={send} className="">
+                <FiPlay />
+              </Button>
+            </div>
+          </div>
+        </Card>
+        <Card className="p-2 col-span-1">
+          <p className="font-mono">connected to arduino</p>
+        </Card>
+      </div>
+      {message}
     </main>
   );
 }
