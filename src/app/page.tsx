@@ -1,6 +1,5 @@
 "use client";
 
-import SetButton from "@/components/SetButton";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 // import Slider from "@/components/Slider";
