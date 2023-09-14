@@ -37,6 +37,6 @@ void loop() {
     }
 
     // Print the received input
-    Serial.println("<OK>"); // Send an acknowledgement
+    Serial.println("<" + input + ">"); // Send an acknowledgement
   }
 }

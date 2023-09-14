@@ -14,6 +14,7 @@ import { IoIosSettings } from "react-icons/io";
 import { FiPlay } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 import RadioCard, { RadioItem } from "@/components/ui/radiocard";
+import { HiForward, HiPlay, HiBackward } from "react-icons/hi2";
 import {
   Card,
   CardDescription,
@@ -25,9 +26,8 @@ export const TEMPLATES: RadioItem[] = [
   {
     name: "Timelapse",
     value: "timelapse",
-    description:
-      "Capture stunning time-lapse sequences effortlessly with our Timelapse Template.",
-    icon: <BiSolidTimer className="text-7xl" />,
+    description: "Capture amazing time-lapses effortlessly.",
+    icon: <BiSolidTimer className="text-6xl" />,
     config: {
       start: 0,
       end: 100,
@@ -37,8 +37,7 @@ export const TEMPLATES: RadioItem[] = [
   {
     name: "Standard",
     value: "standard",
-    description:
-      "Craft visually stunning shots designed to captivate in any scenario.",
+    description: "Craft stunning shots designed to captivate in any scenario.",
     icon: <BiSolidCamera className="text-6xl" />,
     config: {
       start: 0,
@@ -65,7 +64,7 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
   const [sliderValue, setSliderValue] = useState<number[]>([0, 100]);
-  const [template, setTemplate] = useState<string>("")
+  const [template, setTemplate] = useState<string>("");
 
   const listen = async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
     let message = "";
@@ -125,7 +124,7 @@ export default function Home() {
     const encoder = new TextEncoder();
 
     // Modify your message to include the start and end markers
-    const message = "<Hello>";
+    const message = "<" + sliderValue.toString() + ">";
     const data = encoder.encode(message);
 
     const writer = port?.writable?.getWriter();
@@ -163,7 +162,14 @@ export default function Home() {
       });
     };
   });
-  console.log(template)
+
+  function handleTemplateChange(value: string) {
+    setTemplate(value);
+    const template = TEMPLATES.find((item) => value == item.value);
+    if (!template) return;
+    setSliderValue([template?.config.start, template?.config.end]);
+  }
+  console.log(template);
   return (
     <main className="p-4 sm:p-24 w-full">
       <div className="w-full text-center">
@@ -215,23 +221,28 @@ export default function Home() {
               className="w-full "
             />
             <div className="flex space-x-6">
+              <Button>
+                <HiBackward/>
+              </Button>
               <Button onClick={send} className="">
-                <FiPlay />
+                <HiPlay />
+              </Button>
+              <Button>
+                <HiForward />
               </Button>
             </div>
           </div>
         </Card>
         <Card className="p-2 col-span-1">
-          <p className="font-mono">connected to arduino</p>
+          <p className="font-mono">$ ~ {message}</p>
         </Card>
-          <p className="text-muted-foreground col-span-3 text-center">
-            Use our predefined templates to get the most out of you're shot!
-          </p>
         <div className="col-span-3">
-          <RadioCard items={TEMPLATES} setTemplate={setTemplate} setSliderValue={setSliderValue}/>
+          <p className="text-muted-foreground col-span-3 text-left text-xs font-semibold mb-2">
+            Use our predefined templates to get startet quickly!
+          </p>
+          <RadioCard items={TEMPLATES} onChange={handleTemplateChange} />
         </div>
       </div>
-      {message}
     </main>
   );
 }
