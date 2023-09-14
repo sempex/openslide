@@ -15,7 +15,7 @@ import {
 } from "react-icons/pi";
 import { FiPlay } from "react-icons/fi";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { time, timeStamp } from "console";
 
 export default function Home() {
@@ -151,12 +151,18 @@ export default function Home() {
       </div>
       <div className="grid grid-cols-3 gap-10 w-full">
         <Card className="flex flex-col items-center justify-center p-5 sm:p-8 col-span-2">
+          <CardHeader>
+  
+            <CardDescription>
+              controll slider position
+            </CardDescription>
+          </CardHeader>
           <div className="flex flex-col items-center space-y-6 w-full">
             <Slider
               onValueChange={(v) => setSliderValue(v)}
               value={sliderValue}
-              defaultValue={[10, 20]}
               min={0}
+              defaultValue={[0, 100]}
               max={100}
               className="w-full "
             />
