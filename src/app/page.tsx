@@ -6,15 +6,20 @@ import { Slider } from "@/components/ui/slider";
 import { PKG_END, PKG_START } from "@/lib/constants";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { GrConnect } from "react-icons/gr";
 import {
   PiPlugsConnectedDuotone,
   PiPlugsConnectedLight,
   PiPlugsLight,
 } from "react-icons/pi";
+import { BiSolidTimer } from "react-icons/bi";
 import { FiPlay } from "react-icons/fi";
 import { cn } from "@/lib/utils";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { time, timeStamp } from "console";
 
 export default function Home() {
@@ -151,10 +156,7 @@ export default function Home() {
       <div className="grid grid-cols-3 gap-10 w-full">
         <Card className="flex flex-col items-center justify-center p-5 sm:p-8 col-span-2">
           <CardHeader>
-  
-            <CardDescription>
-              controll slider position
-            </CardDescription>
+            <CardDescription>controll slider position</CardDescription>
           </CardHeader>
           <div className="flex flex-col items-center space-y-6 w-full">
             <Slider
@@ -174,6 +176,13 @@ export default function Home() {
         </Card>
         <Card className="p-2 col-span-1">
           <p className="font-mono">connected to arduino</p>
+        </Card>
+        <Card>
+          <CardDescription>Preset</CardDescription>
+          <Button>
+            Timelapse
+            <BiSolidTimer className="text-lg" />
+          </Button>
         </Card>
       </div>
       {message}
