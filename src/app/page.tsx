@@ -1,26 +1,64 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 // import Slider from "@/components/Slider";
 import { PKG_END, PKG_START } from "@/lib/constants";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   PiPlugsConnectedDuotone,
   PiPlugsConnectedLight,
   PiPlugsLight,
 } from "react-icons/pi";
-import { BiSolidTimer } from "react-icons/bi";
+import { BiSolidTimer, BiSolidCamera, BiRun } from "react-icons/bi";
+import { IoIosSettings } from "react-icons/io";
 import { FiPlay } from "react-icons/fi";
 import { cn } from "@/lib/utils";
+import RadioCard, { RadioItem } from "@/components/ui/radiocard";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { time, timeStamp } from "console";
+
+const TEMPLATES: RadioItem[] = [
+  {
+    name: "Timelapse",
+    value: "timelapse",
+    description:
+      "Capture stunning time-lapse sequences effortlessly with our Timelapse Template.",
+    icon: <BiSolidTimer className="text-7xl" />,
+    config: {
+      start: 0,
+      end: 100,
+      speed: 2,
+    },
+  },
+  {
+    name: "Standard",
+    value: "standard",
+    description:
+      "Craft visually stunning shots designed to captivate in any scenario.",
+    icon: <BiSolidCamera className="text-6xl" />,
+    config: {
+      start: 0,
+      end: 100,
+      speed: 45,
+    },
+  },
+  {
+    name: "Action",
+    value: "action",
+    description:
+      "Generate dynamic shots perfectly suited for action-packed scenes.",
+    icon: <BiRun className="text-7xl" />,
+    config: {
+      start: 20,
+      end: 80,
+      speed: 80,
+    },
+  },
+];
 
 export default function Home() {
   const [port, setPort] = useState<SerialPort | null>(null);
@@ -124,33 +162,40 @@ export default function Home() {
       });
     };
   });
-
-  console.log(sliderValue);
   return (
     <main className="p-4 sm:p-24 w-full">
-      <div className="mb-5">
-        <div className="flex items-center gap-1 p-2 w-fit rounded-xl">
-          <div
-            className={cn(
-              "w-2 h-2 rounded-full",
-              port ? "bg-green-400" : "bg-neutral-300"
+      <div className="w-full text-center">
+        <h1 className="font-bold text-xl">OpenSlide V1</h1>
+        <p className="text-muted-foreground text-xs">Your Model</p>
+      </div>
+      <div className="mb-5 flex justify-between items-end">
+        <div>
+          <div className="flex items-center gap-1 p-2 w-fit rounded-xl">
+            <div
+              className={cn(
+                "w-2 h-2 rounded-full",
+                port ? "bg-green-400" : "bg-neutral-300"
+              )}
+            ></div>
+            <span className="text-muted-foreground text-sm">
+              {port ? "Connected" : "Disconnected"}
+            </span>
+          </div>
+          <Button
+            onClick={connect}
+            disabled={!!port}
+            variant={"secondary"}
+            className="drop-shadow-md"
+          >
+            {connected ? (
+              <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
+            ) : (
+              <PiPlugsLight className="text-white text-xl stroke-2" />
             )}
-          ></div>
-          <span className="text-muted-foreground text-sm">
-            {port ? "Connected" : "Disconnected"}
-          </span>
+          </Button>
         </div>
-        <Button
-          onClick={connect}
-          disabled={!!port}
-          variant={"secondary"}
-          className="drop-shadow-md"
-        >
-          {connected ? (
-            <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
-          ) : (
-            <PiPlugsLight className="text-white text-xl stroke-2" />
-          )}
+        <Button variant="secondary">
+          <IoIosSettings />
         </Button>
       </div>
       <div className="grid grid-cols-3 gap-10 w-full">
@@ -177,13 +222,9 @@ export default function Home() {
         <Card className="p-2 col-span-1">
           <p className="font-mono">connected to arduino</p>
         </Card>
-        <Card>
-          <CardDescription>Preset</CardDescription>
-          <Button>
-            Timelapse
-            <BiSolidTimer className="text-lg" />
-          </Button>
-        </Card>
+        <div className="col-span-3">
+          <RadioCard items={TEMPLATES} />
+        </div>
       </div>
       {message}
     </main>
