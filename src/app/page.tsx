@@ -21,7 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const TEMPLATES: RadioItem[] = [
+export const TEMPLATES: RadioItem[] = [
   {
     name: "Timelapse",
     value: "timelapse",
@@ -65,6 +65,7 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
   const [sliderValue, setSliderValue] = useState<number[]>([0, 100]);
+  const [template, setTemplate] = useState<string>("")
 
   const listen = async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
     let message = "";
@@ -162,6 +163,7 @@ export default function Home() {
       });
     };
   });
+  console.log(template)
   return (
     <main className="p-4 sm:p-24 w-full">
       <div className="w-full text-center">
@@ -222,8 +224,11 @@ export default function Home() {
         <Card className="p-2 col-span-1">
           <p className="font-mono">connected to arduino</p>
         </Card>
+          <p className="text-muted-foreground col-span-3 text-center">
+            Use our predefined templates to get the most out of you're shot!
+          </p>
         <div className="col-span-3">
-          <RadioCard items={TEMPLATES} />
+          <RadioCard items={TEMPLATES} setTemplate={setTemplate} setSliderValue={setSliderValue}/>
         </div>
       </div>
       {message}
