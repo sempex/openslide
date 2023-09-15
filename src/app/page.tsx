@@ -115,7 +115,7 @@ export default function Home() {
           returnOn: "CONN",
         }),
         {
-          milliseconds: 2000,
+          milliseconds: 5000,
         }
       );
       setLoadingConnect(false);
