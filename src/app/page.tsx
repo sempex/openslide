@@ -47,7 +47,7 @@ import { Switch } from "@/components/ui/switch";
 import pTimeout from "p-timeout";
 import { Loader2 } from "lucide-react";
 
-export const TEMPLATES: RadioItem[] = [
+const TEMPLATES: RadioItem[] = [
   {
     name: "Timelapse",
     value: "timelapse",
