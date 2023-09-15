@@ -5,9 +5,17 @@ import {
 } from "../constants";
 
 export interface Message {
-  type: (string & {}) | "OK" | "CUR_POS";
+  type: MessageType;
   data?: object;
 }
+
+export type MessageType =
+  | (string & {})
+  | "OK"
+  | "CUR_POS"
+  | "CONN"
+  | "DISCONN"
+  | "MOVE";
 
 export default function parse(input: string): Message {
   const type = input.split(PKG_COMM_DELIMITER)[0];

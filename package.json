@@ -28,6 +28,7 @@
     "eslint-config-next": "13.4.19",
     "lucide-react": "^0.274.0",
     "next": "13.4.19",
+    "p-timeout": "^6.1.2",
     "postcss": "8.4.29",
     "react": "18.2.0",
     "react-dom": "18.2.0",

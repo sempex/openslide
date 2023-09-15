@@ -44,6 +44,8 @@ import {
 import Logs, { LogItem } from "@/components/ui/logs";
 import { serialize } from "@/lib/serial/serialize";
 import { Switch } from "@/components/ui/switch";
+import pTimeout from "p-timeout";
+import { Loader2 } from "lucide-react";
 
 export const TEMPLATES: RadioItem[] = [
   {
@@ -91,32 +93,51 @@ export default function Home() {
   const [template, setTemplate] = useState<string>("");
   const [showLogs, setShowLogs] = useState<boolean>(false);
   const [logs, setLogs] = useState<LogItem[]>([]);
+  const [loadingConnect, setLoadingConnect] = useState<boolean>(false);
 
   const connect = async () => {
     const filters: SerialPortRequestOptions["filters"] = [];
 
     // Prompt user to select an Arduino Uno device.
     const port = await navigator.serial.requestPort({ filters });
-    setConnected(true);
-
-    setPort(port);
     // await port.close();
+    setLoadingConnect(true);
+    setPort(port);
 
     await port.open({ baudRate: 9600 });
-
     const reader = port.readable?.getReader();
 
-    if (reader)
-      listen(reader, (message) => {
+    if (!reader) return;
+
+    try {
+      const connected = await pTimeout(
+        listen(reader, {
+          returnOn: "CONN",
+        }),
+        {
+          milliseconds: 1000,
+        }
+      );
+      setLoadingConnect(false);
+      setConnected(true);
+    } catch {
+      console.log("no connection");
+      setPort(null);
+      setLoadingConnect(false);
+      return;
+    }
+
+    listen(reader, {
+      onMessage: (message) => {
         console.log(message);
         handleAddLogs(serialize(message), "received");
-      });
+      },
+    });
   };
 
   const handleSend = async () => {
     if (!port) return;
     // Modify your message to include the start and end markers
-
     send(
       port,
       {
@@ -154,6 +175,7 @@ export default function Home() {
     navigator.serial.addEventListener("disconnect", (e) => {
       console.log("oh nei", e);
       setPort(null);
+      setConnected(false);
     });
 
     return () => {
@@ -172,7 +194,7 @@ export default function Home() {
     if (!template) return;
     setPosition([template?.config.start, template?.config.end]);
   }
-  console.log(template);
+
   return (
     <main className="p-4 sm:p-24 w-full h-screen">
       <div className="w-full text-center">
@@ -185,20 +207,20 @@ export default function Home() {
             <div
               className={cn(
                 "w-2 h-2 rounded-full",
-                port ? "bg-green-400" : "bg-neutral-300"
+                connected ? "bg-green-400" : "bg-neutral-300"
               )}
             ></div>
             <span className="text-muted-foreground text-sm">
-              {port ? "Connected" : "Disconnected"}
+              {connected ? "Connected" : "Disconnected"}
             </span>
           </div>
           <Button
             onClick={connect}
-            disabled={!!port}
+            disabled={connected}
             variant={"secondary"}
             className="drop-shadow-md"
           >
-            {connected ? (
+            {loadingConnect ? <Loader2 className="animate-spin w-3 h-3" /> : connected ? (
               <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
             ) : (
               <PiPlugsLight className="text-white text-xl stroke-2" />
