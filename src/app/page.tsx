@@ -281,7 +281,7 @@ export default function Home() {
               <Button
                 onClick={() =>
                   handleSend({
-                    type: "move",
+                    type: "MOVE",
                     data: { start: position[0], end: position[1] },
                   })
                 }
