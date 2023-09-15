@@ -151,8 +151,8 @@ export default function Home() {
   const handleMoveRight = () => {
     setPosition([position[0], position[1] + 2]);
     handleSend({
-      type: "move",
-      data: { start: position[0], end: position[1] },
+      type: "MOVE",
+      data: { start: position[0], end: position[1] + 2 },
     });
   };
 
