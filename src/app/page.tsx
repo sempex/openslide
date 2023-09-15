@@ -21,6 +21,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import parse from "@/lib/serial/parse";
+import listen from "@/lib/serial/listen";
+import send from "@/lib/serial/send";
 
 export const TEMPLATES: RadioItem[] = [
   {
@@ -66,43 +69,6 @@ export default function Home() {
   const [sliderValue, setSliderValue] = useState<number[]>([0, 100]);
   const [template, setTemplate] = useState<string>("");
 
-  const listen = async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
-    let message = "";
-    let startMarkerFound = false;
-
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) {
-        // Allow the serial port to be closed later.
-        reader.releaseLock();
-        break;
-      }
-
-      // Convert the received Uint8Array to a string
-      const stringValue = new TextDecoder().decode(value);
-
-      // Process each character in the received data
-      for (let i = 0; i < stringValue.length; i++) {
-        const currentChar = stringValue[i];
-
-        if (currentChar === PKG_START) {
-          // Start marker found, reset the message
-          message = "";
-          startMarkerFound = true;
-        } else if (currentChar === PKG_END && startMarkerFound) {
-          // End marker found, process the message
-          console.log("Received message:", message);
-          startMarkerFound = false;
-        } else if (startMarkerFound) {
-          // Append the character to the message
-          message += currentChar;
-        }
-
-        setMessage(message);
-      }
-    }
-  };
-
   const connect = async () => {
     const filters: SerialPortRequestOptions["filters"] = [];
 
@@ -117,25 +83,22 @@ export default function Home() {
 
     const reader = port.readable?.getReader();
 
-    if (reader) listen(reader);
+    if (reader)
+      listen(reader, (message) => {
+        console.log(message);
+      });
   };
 
-  const send = async () => {
-    const encoder = new TextEncoder();
-
+  const handleSend = async () => {
+    if (!port) return;
     // Modify your message to include the start and end markers
-    const message = "<" + sliderValue.toString() + ">";
-    const data = encoder.encode(message);
-
-    const writer = port?.writable?.getWriter();
-
-    if (!writer) return;
-
-    await writer.write(data);
-
-    console.log(`Sent: ${message}`);
-
-    writer.releaseLock();
+    send(port, {
+      type: "move",
+      data: {
+        start: sliderValue[0],
+        end: sliderValue[1],
+      },
+    });
   };
 
   const disconnect = async () => {
@@ -222,9 +185,9 @@ export default function Home() {
             />
             <div className="flex space-x-6">
               <Button>
-                <HiBackward/>
+                <HiBackward />
               </Button>
-              <Button onClick={send} className="">
+              <Button onClick={handleSend} className="">
                 <HiPlay />
               </Button>
               <Button>
