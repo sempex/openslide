@@ -47,7 +47,7 @@ import { Switch } from "@/components/ui/switch";
 import pTimeout from "p-timeout";
 import { Loader2 } from "lucide-react";
 
-export const TEMPLATES: RadioItem[] = [
+const TEMPLATES: RadioItem[] = [
   {
     name: "Timelapse",
     value: "timelapse",
@@ -89,6 +89,7 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
   const [position, setPosition] = useState<number[]>([0, 100]);
+  const [device, setDevice] = useState<Message>()
   const [speed, setSpeed] = useState<number[]>([25]);
   const [template, setTemplate] = useState<string>("");
   const [showLogs, setShowLogs] = useState<boolean>(false);
@@ -118,10 +119,10 @@ export default function Home() {
           milliseconds: 5000,
         }
       );
-
-      connected?.data?.ok
+      console.log(connected?.data)
       setLoadingConnect(false);
       setConnected(true);
+      setDevice(connected)
     } catch {
       console.log("no connection");
       setPort(null);
@@ -207,7 +208,7 @@ export default function Home() {
     <main className="p-4 sm:p-24 w-full h-screen">
       <div className="w-full text-center">
         <h1 className="font-bold text-xl">OpenSlide V1</h1>
-        <p className="text-muted-foreground text-xs">Your Model</p>
+        <p className="text-muted-foreground text-xs">{(device?.data?.name || "")} {device?.data?.v || ""}</p>
       </div>
       <div className="mb-5 flex justify-between items-end">
         <div>
