@@ -4,3 +4,4 @@ export const PKG_END = ">";
 export const PKG_COMM_DELIMITER = ":";
 export const PKG_DATA_DELIMITER = ",";
 export const PKG_KEY_VALUE_DELIMITER = "=";
+export const CONN_START = "CONN";

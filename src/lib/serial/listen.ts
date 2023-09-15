@@ -1,9 +1,12 @@
 import { PKG_END, PKG_START } from "@/lib/constants";
-import parse, { Message } from "./parse";
+import parse, { Message, MessageType } from "./parse";
 
 const listen = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
-  onMessage: (message: Message) => void
+  options: {
+    onMessage?: (message: Message) => void;
+    returnOn?: MessageType;
+  }
 ) => {
   let message = "";
   let startMarkerFound = false;
@@ -29,7 +32,11 @@ const listen = async (
         startMarkerFound = true;
       } else if (currentChar === PKG_END && startMarkerFound) {
         // End marker found, process the message
-        onMessage(parse(message));
+        if (options.onMessage) options.onMessage(parse(message));
+        if (options.returnOn && options.returnOn === parse(message).type) {
+          return parse(message);
+        }
+
         startMarkerFound = false;
       } else if (startMarkerFound) {
         // Append the character to the message
@@ -39,4 +46,4 @@ const listen = async (
   }
 };
 
-export default listen
+export default listen;
