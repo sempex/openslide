@@ -24,7 +24,7 @@ interface Props {
 export default function RadioCard({ items, onChange }: Props) {
   return (
     <RadioGroup.Root
-      className="grid grid-cols-3 gap-4"
+      className="grid lg:grid-cols-3 grid-cols-1 grid-rows-3 gap-4"
       onValueChange={onChange}
     >
       {items.map((item) => {

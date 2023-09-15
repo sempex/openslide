@@ -17,6 +17,7 @@ import RadioCard, { RadioItem } from "@/components/ui/radiocard";
 import { HiForward, HiPlay, HiBackward } from "react-icons/hi2";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -32,6 +33,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import Logs, { LogItem } from "@/components/ui/logs";
+import { serialize } from "@/lib/serial/serialize";
+import { Switch } from "@/components/ui/switch";
 
 export const TEMPLATES: RadioItem[] = [
   {
@@ -75,8 +87,10 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
   const [position, setPosition] = useState<number[]>([0, 100]);
-  const [speed, setSpeed] = useState<number[]>([25])
+  const [speed, setSpeed] = useState<number[]>([25]);
   const [template, setTemplate] = useState<string>("");
+  const [showLogs, setShowLogs] = useState<boolean>(false);
+  const [logs, setLogs] = useState<LogItem[]>([]);
 
   const connect = async () => {
     const filters: SerialPortRequestOptions["filters"] = [];
@@ -95,25 +109,42 @@ export default function Home() {
     if (reader)
       listen(reader, (message) => {
         console.log(message);
+        handleAddLogs(serialize(message), "received");
       });
   };
 
   const handleSend = async () => {
     if (!port) return;
     // Modify your message to include the start and end markers
-    send(port, {
-      type: "move",
-      data: {
-        start: position[0],
-        end: position[1],
+
+    send(
+      port,
+      {
+        type: "move",
+        data: {
+          start: position[0],
+          end: position[1],
+        },
       },
-    });
+      (message) => handleAddLogs(message, "sent")
+    );
   };
 
   const disconnect = async () => {
     await port?.close();
     setPort(null);
     setConnected(false);
+  };
+
+  const handleAddLogs = (message: string, type: "sent" | "received") => {
+    setLogs((logs) => [
+      ...logs,
+      {
+        message: message,
+        time: new Date(),
+        type: type,
+      },
+    ]);
   };
 
   useEffect(() => {
@@ -143,7 +174,7 @@ export default function Home() {
   }
   console.log(template);
   return (
-    <main className="p-4 sm:p-24 w-full">
+    <main className="p-4 sm:p-24 w-full h-screen">
       <div className="w-full text-center">
         <h1 className="font-bold text-xl">OpenSlide V1</h1>
         <p className="text-muted-foreground text-xs">Your Model</p>
@@ -183,15 +214,22 @@ export default function Home() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Settings</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowLogs((l) => !l)}>
+              {showLogs ? "Hide" : "Show"} Logs
+            </DropdownMenuItem>
             <DropdownMenuItem>Billing</DropdownMenuItem>
             <DropdownMenuItem>Team</DropdownMenuItem>
             <DropdownMenuItem>Subscription</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="grid grid-cols-3 gap-10 w-full">
-        <Card className="flex flex-col items-center justify-center p-5 sm:p-8 col-span-3">
+      <div className="grid grid-cols-3 gap-4 w-full">
+        <Card
+          className={cn(
+            "flex flex-col items-center justify-center p-5 sm:p-8",
+            !showLogs ? "col-span-3" : "col-span-2"
+          )}
+        >
           <CardHeader>
             <CardDescription>controll slider position</CardDescription>
           </CardHeader>
@@ -217,9 +255,11 @@ export default function Home() {
             </div>
           </div>
         </Card>
-        {/* <Card className="p-2 col-span-1">
-          <p className="font-mono">$ ~ {message}</p>
-        </Card> */}
+        {showLogs && (
+          <Card className="p-2 col-span-1">
+            <Logs logs={logs} />
+          </Card>
+        )}
         <div className="col-span-3">
           <p className="text-muted-foreground col-span-3 text-left text-xs font-semibold mb-2">
             Use our predefined templates to get startet quickly!
