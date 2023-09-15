@@ -1,6 +1,12 @@
 import { cn } from "@/lib/utils";
 import { HiArrowSmallLeft, HiArrowSmallRight } from "react-icons/hi2";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
+import { ScrollArea } from "./scroll-area";
 
 export interface LogItem {
   time: Date;
@@ -10,7 +16,7 @@ export interface LogItem {
 
 export default function Logs({ logs }: { logs: LogItem[] }) {
   return (
-    <div className="flex font-mono bg-black rounded-lg flex-col h-full overflow-y-auto max-h-56">
+    <ScrollArea className="flex font-mono bg-black rounded-lg flex-col h-full overflow-y-auto max-h-56">
       {logs.map((log, i) => (
         <div
           key={i}
@@ -32,7 +38,12 @@ export default function Logs({ logs }: { logs: LogItem[] }) {
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Message {log.type === "received" ? "received from slider" : "sent to slider"}</p>
+                <p>
+                  Message{" "}
+                  {log.type === "received"
+                    ? "received from slider"
+                    : "sent to slider"}
+                </p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -40,6 +51,6 @@ export default function Logs({ logs }: { logs: LogItem[] }) {
           <pre className="flex-1">{log.message}</pre>
         </div>
       ))}
-    </div>
+    </ScrollArea>
   );
 }
