@@ -139,7 +139,6 @@ export default function Home() {
     if (!port) return;
     const { type, data } = message;
     // Modify your message to include the start and end markers
-    console.log(data);
     send(
       port,
       {
