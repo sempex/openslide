@@ -149,10 +149,11 @@ export default function Home() {
     );
   };
   const handleMoveRight = () => {
-    setPosition([position[0], position[1] + 2]);
+    const newPos = { start: position[0], end: position[1] + 2 };
+    setPosition([newPos.start, newPos.end]);
     handleSend({
       type: "MOVE",
-      data: { start: position[0], end: position[1] + 2 },
+      data: newPos,
     });
   };
 
