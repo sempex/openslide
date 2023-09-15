@@ -74,7 +74,8 @@ export default function Home() {
   const [port, setPort] = useState<SerialPort | null>(null);
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
-  const [sliderValue, setSliderValue] = useState<number[]>([0, 100]);
+  const [position, setPosition] = useState<number[]>([0, 100]);
+  const [speed, setSpeed] = useState<number[]>([25])
   const [template, setTemplate] = useState<string>("");
 
   const connect = async () => {
@@ -103,8 +104,8 @@ export default function Home() {
     send(port, {
       type: "move",
       data: {
-        start: sliderValue[0],
-        end: sliderValue[1],
+        start: position[0],
+        end: position[1],
       },
     });
   };
@@ -138,7 +139,7 @@ export default function Home() {
     setTemplate(value);
     const template = TEMPLATES.find((item) => value == item.value);
     if (!template) return;
-    setSliderValue([template?.config.start, template?.config.end]);
+    setPosition([template?.config.start, template?.config.end]);
   }
   console.log(template);
   return (
@@ -190,14 +191,14 @@ export default function Home() {
         </DropdownMenu>
       </div>
       <div className="grid grid-cols-3 gap-10 w-full">
-        <Card className="flex flex-col items-center justify-center p-5 sm:p-8 col-span-2">
+        <Card className="flex flex-col items-center justify-center p-5 sm:p-8 col-span-3">
           <CardHeader>
             <CardDescription>controll slider position</CardDescription>
           </CardHeader>
           <div className="flex flex-col items-center space-y-6 w-full">
             <Slider
-              onValueChange={(v) => setSliderValue(v)}
-              value={sliderValue}
+              onValueChange={(v) => setPosition(v)}
+              value={position}
               min={0}
               defaultValue={[0, 100]}
               max={100}
@@ -216,9 +217,9 @@ export default function Home() {
             </div>
           </div>
         </Card>
-        <Card className="p-2 col-span-1">
+        {/* <Card className="p-2 col-span-1">
           <p className="font-mono">$ ~ {message}</p>
-        </Card>
+        </Card> */}
         <div className="col-span-3">
           <p className="text-muted-foreground col-span-3 text-left text-xs font-semibold mb-2">
             Use our predefined templates to get startet quickly!
