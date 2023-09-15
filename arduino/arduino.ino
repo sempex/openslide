@@ -6,6 +6,7 @@ String input = "";
 
 void setup() {
   Serial.begin(9600);
+  Serial.println("<CONN:v=1,name=OpenSlide>");
 }
 
 void loop() {
@@ -37,6 +38,6 @@ void loop() {
     }
 
     // Print the received input
-    Serial.println("<" + input + ">"); // Send an acknowledgement
+    Serial.println("<OK:pos=19>"); // Send an acknowledgement
   }
 }
