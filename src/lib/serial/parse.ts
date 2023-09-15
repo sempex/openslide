@@ -6,7 +6,7 @@ import {
 
 export interface Message {
   type: MessageType;
-  data?: object;
+  data?: Record<string, any>;
 }
 
 export type MessageType =

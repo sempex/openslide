@@ -118,6 +118,8 @@ export default function Home() {
           milliseconds: 5000,
         }
       );
+
+      connected?.data?.ok
       setLoadingConnect(false);
       setConnected(true);
     } catch {
