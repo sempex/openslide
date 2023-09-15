@@ -24,6 +24,14 @@ import {
 import parse from "@/lib/serial/parse";
 import listen from "@/lib/serial/listen";
 import send from "@/lib/serial/send";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const TEMPLATES: RadioItem[] = [
   {
@@ -165,9 +173,21 @@ export default function Home() {
             )}
           </Button>
         </div>
-        <Button variant="secondary">
-          <IoIosSettings />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary">
+              <IoIosSettings />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Settings</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Billing</DropdownMenuItem>
+            <DropdownMenuItem>Team</DropdownMenuItem>
+            <DropdownMenuItem>Subscription</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="grid grid-cols-3 gap-10 w-full">
         <Card className="flex flex-col items-center justify-center p-5 sm:p-8 col-span-2">
