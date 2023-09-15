@@ -18,7 +18,7 @@ const Slider = React.forwardRef<
     {...props}
   >
     <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
-      <SliderPrimitive.Range className={cn("absolute h-full bg-[#2563EB]")} />
+      <SliderPrimitive.Range className={cn("absolute h-full bg-primary")} />
     </SliderPrimitive.Track>
     {props.defaultValue?.map((value, i) => {
       return (
