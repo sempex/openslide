@@ -22,7 +22,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import parse from "@/lib/serial/parse";
+import parse, { Message } from "@/lib/serial/parse";
 import listen from "@/lib/serial/listen";
 import send from "@/lib/serial/send";
 import {
@@ -115,7 +115,7 @@ export default function Home() {
           returnOn: "CONN",
         }),
         {
-          milliseconds: 1000,
+          milliseconds: 2000,
         }
       );
       setLoadingConnect(false);
@@ -135,20 +135,26 @@ export default function Home() {
     });
   };
 
-  const handleSend = async () => {
+  const handleSend = async (message: Message) => {
     if (!port) return;
+    const { type, data } = message;
     // Modify your message to include the start and end markers
+    console.log(data);
     send(
       port,
       {
-        type: "move",
-        data: {
-          start: position[0],
-          end: position[1],
-        },
+        type: type,
+        data: data,
       },
       (message) => handleAddLogs(message, "sent")
     );
+  };
+  const handleMoveRight = () => {
+    setPosition([position[0], position[1] + 2]);
+    handleSend({
+      type: "move",
+      data: { start: position[0], end: position[1] },
+    });
   };
 
   const disconnect = async () => {
@@ -220,7 +226,9 @@ export default function Home() {
             variant={"secondary"}
             className="drop-shadow-md"
           >
-            {loadingConnect ? <Loader2 className="animate-spin w-3 h-3" /> : connected ? (
+            {loadingConnect ? (
+              <Loader2 className="animate-spin w-3 h-3" />
+            ) : connected ? (
               <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
             ) : (
               <PiPlugsLight className="text-white text-xl stroke-2" />
@@ -268,10 +276,18 @@ export default function Home() {
               <Button>
                 <HiBackward />
               </Button>
-              <Button onClick={handleSend} className="">
+              <Button
+                onClick={() =>
+                  handleSend({
+                    type: "move",
+                    data: { start: position[0], end: position[1] },
+                  })
+                }
+                className=""
+              >
                 <HiPlay />
               </Button>
-              <Button>
+              <Button onClick={handleMoveRight}>
                 <HiForward />
               </Button>
             </div>

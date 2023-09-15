@@ -34,7 +34,6 @@ const listen = async (
         // End marker found, process the message
         if (options.onMessage) options.onMessage(parse(message));
         if (options.returnOn && options.returnOn === parse(message).type) {
-          reader.releaseLock();
           return parse(message);
         }
 
