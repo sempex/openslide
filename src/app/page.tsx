@@ -75,7 +75,7 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
   const [position, setPosition] = useState<number[]>([0, 100]);
-  const [speed, setSpeed] = useState<number[]>([25])
+  const [speed, setSpeed] = useState<number[]>([25]);
   const [template, setTemplate] = useState<string>("");
 
   const connect = async () => {
@@ -98,17 +98,19 @@ export default function Home() {
       });
   };
 
-  const handleSend = async () => {
+  const handleSend = async (type: string, data: { start: number; end: number }) => {
     if (!port) return;
     // Modify your message to include the start and end markers
+    console.log(data)
     send(port, {
-      type: "move",
-      data: {
-        start: position[0],
-        end: position[1],
-      },
+      type: type,
+      data: data,
     });
   };
+  const handleMoveRight = () => {
+    setPosition([position[0], position[1] + 2])
+    handleSend("move", {start: position[0], end: position[1]})
+  }
 
   const disconnect = async () => {
     await port?.close();
@@ -208,18 +210,23 @@ export default function Home() {
               <Button>
                 <HiBackward />
               </Button>
-              <Button onClick={handleSend} className="">
+              <Button
+                onClick={() =>
+                  handleSend("move" ,{ start: position[0], end: position[1] })
+                }
+                className=""
+              >
                 <HiPlay />
               </Button>
-              <Button>
-                <HiForward />
+              <Button onClick={handleMoveRight}>
+                <HiForward/>
               </Button>
             </div>
           </div>
         </Card>
-        {/* <Card className="p-2 col-span-1">
+        <Card className="p-2 col-span-1">
           <p className="font-mono">$ ~ {message}</p>
-        </Card> */}
+        </Card>
         <div className="col-span-3">
           <p className="text-muted-foreground col-span-3 text-left text-xs font-semibold mb-2">
             Use our predefined templates to get startet quickly!
