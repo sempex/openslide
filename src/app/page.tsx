@@ -79,7 +79,7 @@ const TEMPLATES: RadioItem[] = [
     config: {
       start: 20,
       end: 80,
-      speed: 80,
+      speed: 100,
     },
   },
 ];
@@ -202,6 +202,7 @@ export default function Home() {
     const template = TEMPLATES.find((item) => value == item.value);
     if (!template) return;
     setPosition([template?.config.start, template?.config.end]);
+    setSpeed([template?.config.speed])
   }
 
   return (
