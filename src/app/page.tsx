@@ -268,6 +268,12 @@ export default function Home() {
           </CardHeader>
           <div className="flex flex-col items-center space-y-6 w-full">
             <Slider
+              orientation="vertical"
+              min={0}
+              defaultValue={[0, 100]}
+              max={100}
+              className="h-full" />
+            <Slider
               onValueChange={(v) => setPosition(v)}
               value={position}
               min={0}
