@@ -308,8 +308,8 @@ export default function Home() {
                 <Button onClick={handleMoveRight}>
                   <HiForward />
                 </Button>
-                <Button onClick={handleSwap} className="bg-transparent">
-                  <HiOutlineSwitchHorizontal className="text-secondary-foreground text-lg"/>
+                <Button onClick={handleSwap} variant="link" className="hover:bg-secondary">
+                  <HiOutlineSwitchHorizontal className="text-lg"/>
                 </Button>
               </div>
             </div>
