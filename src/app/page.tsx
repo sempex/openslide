@@ -251,9 +251,6 @@ export default function Home() {
             <DropdownMenuItem onClick={() => setShowLogs((l) => !l)}>
               {showLogs ? "Hide" : "Show"} Logs
             </DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
