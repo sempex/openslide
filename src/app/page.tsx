@@ -90,7 +90,7 @@ export default function Home() {
   const [connected, setConnected] = useState<boolean>(false);
   const [position, setPosition] = useState<number[]>([0, 100]);
   const [device, setDevice] = useState<Message>()
-  const [speed, setSpeed] = useState<number[]>([25]);
+  const [speed, setSpeed] = useState<number[]>([50]);
   const [template, setTemplate] = useState<string>("");
   const [showLogs, setShowLogs] = useState<boolean>(false);
   const [logs, setLogs] = useState<LogItem[]>([]);
@@ -263,43 +263,54 @@ export default function Home() {
             !showLogs ? "col-span-3" : "col-span-2"
           )}
         >
-          <CardHeader>
-            <CardDescription>controll slider position</CardDescription>
-          </CardHeader>
-          <div className="flex flex-col items-center space-y-6 w-full">
-            <Slider
-              orientation="vertical"
-              min={0}
-              defaultValue={[0, 100]}
-              max={100}
-              className="h-full" />
-            <Slider
-              onValueChange={(v) => setPosition(v)}
-              value={position}
-              min={0}
-              defaultValue={[0, 100]}
-              max={100}
-              className="w-full "
-            />
-            <div className="flex space-x-6">
-              <Button>
-                <HiBackward />
-              </Button>
-              <Button
-                onClick={() =>
-                  handleSend({
-                    type: "MOVE",
-                    data: { start: position[0], end: position[1] },
-                  })
-                }
-                className=""
-              >
-                <HiPlay />
-              </Button>
-              <Button onClick={handleMoveRight}>
-                <HiForward />
-              </Button>
+          <div className="flex items-center gap-20 w-full">
+            <div className="flex flex-col items-center space-y-6 w-full">
+              <CardHeader>
+                <CardDescription>controll slider position</CardDescription>
+              </CardHeader>
+              <Slider
+                onValueChange={(v) => setPosition(v)}
+                value={position}
+                min={0}
+                defaultValue={[0, 100]}
+                max={100}
+                className="w-full "
+              />
+              <div className="flex space-x-6">
+                <Button>
+                  <HiBackward />
+                </Button>
+                <Button
+                  onClick={() =>
+                    handleSend({
+                      type: "MOVE",
+                      data: { start: position[0], end: position[1] },
+                    })
+                  }
+                  className=""
+                >
+                  <HiPlay />
+                </Button>
+                <Button onClick={handleMoveRight}>
+                  <HiForward />
+                </Button>
+              </div>
             </div>
+            <div className="flex items-center">
+              <Slider
+                onValueChange={(v) => setSpeed(v)}
+                orientation="vertical"
+                value={speed}
+                min={0}
+                defaultValue={[0, 100]}
+                max={100}
+                className="h-56" />
+              <CardHeader className="rotate-90 cursor-vertical-text">
+                <CardDescription>controll slider speed</CardDescription>
+              </CardHeader>
+
+            </div>
+
           </div>
         </Card>
         {showLogs && (
