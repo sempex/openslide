@@ -297,7 +297,8 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center flex-col w-24">
+              <div>{speed} cm/s</div>
               <Slider
                 onValueChange={(v) => setSpeed(v)}
                 orientation="vertical"
@@ -306,12 +307,8 @@ export default function Home() {
                 defaultValue={[0, 100]}
                 max={100}
                 className="h-56" />
-              <CardHeader className="rotate-90 cursor-vertical-text text-center">
-                <CardDescription>controll slider speed</CardDescription>
-              </CardHeader>
-
+                <span className="text-muted-foreground">Speed</span>
             </div>
-
           </div>
         </Card>
         {showLogs && (
