@@ -15,6 +15,7 @@ import { FiPlay } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 import RadioCard, { RadioItem } from "@/components/ui/radiocard";
 import { HiForward, HiPlay, HiBackward } from "react-icons/hi2";
+import { HiOutlineSwitchHorizontal } from "react-icons/hi";
 import {
   Card,
   CardContent,
@@ -89,7 +90,7 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
   const [position, setPosition] = useState<number[]>([0, 100]);
-  const [device, setDevice] = useState<Message>()
+  const [device, setDevice] = useState<Message>();
   const [speed, setSpeed] = useState<number[]>([50]);
   const [template, setTemplate] = useState<string>("");
   const [showLogs, setShowLogs] = useState<boolean>(false);
@@ -119,10 +120,10 @@ export default function Home() {
           milliseconds: 5000,
         }
       );
-      console.log(connected?.data)
+      console.log(connected?.data);
       setLoadingConnect(false);
       setConnected(true);
-      setDevice(connected)
+      setDevice(connected);
     } catch {
       console.log("no connection");
       setPort(null);
@@ -159,6 +160,19 @@ export default function Home() {
       data: newPos,
     });
   };
+
+  const handleMoveLeft = () => {
+    const newPos = { start: position[0] - 2, end: position[1] };
+    setPosition([newPos.start, newPos.end]);
+    handleSend({
+      type: "MOVE",
+      data: newPos,
+    });
+  };
+
+  const handleSwap = () => {
+    setPosition([position[1], position[0]])
+  }
 
   const disconnect = async () => {
     await port?.close();
@@ -202,14 +216,16 @@ export default function Home() {
     const template = TEMPLATES.find((item) => value == item.value);
     if (!template) return;
     setPosition([template?.config.start, template?.config.end]);
-    setSpeed([template?.config.speed])
+    setSpeed([template?.config.speed]);
   }
 
   return (
     <main className="p-4 sm:p-24 w-full h-screen">
       <div className="w-full text-center">
         <h1 className="font-bold text-xl">OpenSlide V1</h1>
-        <p className="text-muted-foreground text-xs">{(device?.data?.name || "")} {device?.data?.v || ""}</p>
+        <p className="text-muted-foreground text-xs">
+          {device?.data?.name || ""} {device?.data?.v || ""}
+        </p>
       </div>
       <div className="mb-5 flex justify-between items-end">
         <div>
@@ -275,7 +291,7 @@ export default function Home() {
                 className="w-full "
               />
               <div className="flex space-x-6">
-                <Button>
+                <Button onClick={handleMoveLeft}>
                   <HiBackward />
                 </Button>
                 <Button
@@ -292,6 +308,9 @@ export default function Home() {
                 <Button onClick={handleMoveRight}>
                   <HiForward />
                 </Button>
+                <Button onClick={handleSwap} className="bg-transparent">
+                  <HiOutlineSwitchHorizontal className="text-secondary-foreground text-lg"/>
+                </Button>
               </div>
             </div>
             <div className="flex items-center flex-col w-24">
@@ -303,8 +322,9 @@ export default function Home() {
                 min={0}
                 defaultValue={[0, 100]}
                 max={100}
-                className="h-56" />
-                <span className="text-muted-foreground">Speed</span>
+                className="h-56"
+              />
+              <span className="text-muted-foreground">Speed</span>
             </div>
           </div>
         </Card>
