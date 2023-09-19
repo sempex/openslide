@@ -8,3 +8,7 @@ SET_POS:start=10,end=100
   
 RES 
 OK: data=1,data=1
+
+## Ideas
+
+- Repeat Mode (Slider cycles throw points until stop)
