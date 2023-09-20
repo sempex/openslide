@@ -14,8 +14,7 @@ import { IoIosSettings } from "react-icons/io";
 import { FiPlay } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 import RadioCard, { RadioItem } from "@/components/ui/radiocard";
-import { HiForward, HiPlay, HiBackward } from "react-icons/hi2";
-import { HiOutlineSwitchHorizontal } from "react-icons/hi";
+import { HiForward, HiPlay, HiBackward, HiArrowPathRoundedSquare, HiOutlineArrowsRightLeft } from "react-icons/hi2";
 import {
   Card,
   CardContent,
@@ -47,6 +46,7 @@ import { serialize } from "@/lib/serial/serialize";
 import { Switch } from "@/components/ui/switch";
 import pTimeout from "p-timeout";
 import { Loader2 } from "lucide-react";
+import { Toggle } from "@/components/ui/toggle";
 
 const TEMPLATES: RadioItem[] = [
   {
@@ -90,11 +90,13 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
   const [position, setPosition] = useState<number[]>([0, 100]);
+  const [direction, setDirection] = useState<"ltr" | "rtl">("ltr")
   const [device, setDevice] = useState<Message>();
   const [speed, setSpeed] = useState<number[]>([50]);
   const [template, setTemplate] = useState<string>("");
   const [showLogs, setShowLogs] = useState<boolean>(false);
   const [logs, setLogs] = useState<LogItem[]>([]);
+  const [loop, setLoop] = useState(false);
   const [loadingConnect, setLoadingConnect] = useState<boolean>(false);
 
   const connect = async () => {
@@ -172,6 +174,7 @@ export default function Home() {
 
   const handleSwap = () => {
     setPosition([position[1], position[0]])
+    setDirection(d => d === "ltr" ? "rtl" : "ltr")
   }
 
   const disconnect = async () => {
@@ -291,7 +294,8 @@ export default function Home() {
                 className="w-full "
               />
               <div className="flex space-x-6">
-                <Button onClick={handleMoveLeft}>
+              <Toggle onClick={() => setLoop(!loop)}><HiArrowPathRoundedSquare className={cn("text-xl", loop && "text-primary")} /></Toggle>
+                <Button>
                   <HiBackward />
                 </Button>
                 <Button
@@ -308,8 +312,8 @@ export default function Home() {
                 <Button onClick={handleMoveRight}>
                   <HiForward />
                 </Button>
-                <Button onClick={handleSwap} variant="link" className="hover:bg-secondary">
-                  <HiOutlineSwitchHorizontal className="text-lg"/>
+                <Button onClick={handleSwap} variant="link" className={"hover:bg-secondary"}>
+                  <HiOutlineArrowsRightLeft className={cn("text-lg transition-all duration-300",  direction === "ltr" ? "rotate-0" : "rotate-180")}/>
                 </Button>
               </div>
             </div>
