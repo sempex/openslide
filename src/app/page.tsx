@@ -14,7 +14,13 @@ import { IoIosSettings } from "react-icons/io";
 import { FiPlay } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 import RadioCard, { RadioItem } from "@/components/ui/radiocard";
-import { HiForward, HiPlay, HiBackward, HiArrowPathRoundedSquare, HiOutlineArrowsRightLeft } from "react-icons/hi2";
+import {
+  HiForward,
+  HiPlay,
+  HiBackward,
+  HiArrowPathRoundedSquare,
+  HiOutlineArrowsRightLeft,
+} from "react-icons/hi2";
 import {
   Card,
   CardContent,
@@ -47,6 +53,8 @@ import { Switch } from "@/components/ui/switch";
 import pTimeout from "p-timeout";
 import { Loader2 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
+import SliderImage from "../../cad/renders/v4.png";
+import Image from "next/image";
 
 const TEMPLATES: RadioItem[] = [
   {
@@ -90,7 +98,7 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
   const [position, setPosition] = useState<number[]>([0, 100]);
-  const [direction, setDirection] = useState<"ltr" | "rtl">("ltr")
+  const [direction, setDirection] = useState<"ltr" | "rtl">("ltr");
   const [device, setDevice] = useState<Message>();
   const [speed, setSpeed] = useState<number[]>([50]);
   const [template, setTemplate] = useState<string>("");
@@ -173,9 +181,9 @@ export default function Home() {
   };
 
   const handleSwap = () => {
-    setPosition([position[1], position[0]])
-    setDirection(d => d === "ltr" ? "rtl" : "ltr")
-  }
+    setPosition([position[1], position[0]]);
+    setDirection((d) => (d === "ltr" ? "rtl" : "ltr"));
+  };
 
   const disconnect = async () => {
     await port?.close();
@@ -282,8 +290,10 @@ export default function Home() {
         >
           <div className="flex items-center gap-20 w-full">
             <div className="flex flex-col items-center space-y-6 w-full">
-              <CardHeader>
-                <CardDescription>controll slider position</CardDescription>
+              <CardHeader className="p-0 relative">
+                {/* <CardDescription>controll slider position</CardDescription> */}
+                <Image src={SliderImage} alt="Slider"  />
+                <div className="bg-gradient-to-t from-background absolute inset-0"></div>
               </CardHeader>
               <Slider
                 onValueChange={(v) => setPosition(v)}
@@ -291,10 +301,14 @@ export default function Home() {
                 min={0}
                 defaultValue={[0, 100]}
                 max={100}
-                className="w-full "
+                className="w-full"
               />
               <div className="flex space-x-6">
-              <Toggle onClick={() => setLoop(!loop)}><HiArrowPathRoundedSquare className={cn("text-xl", loop && "text-primary")} /></Toggle>
+                <Toggle onClick={() => setLoop(!loop)}>
+                  <HiArrowPathRoundedSquare
+                    className={cn("text-xl", loop && "text-primary")}
+                  />
+                </Toggle>
                 <Button>
                   <HiBackward />
                 </Button>
@@ -312,8 +326,17 @@ export default function Home() {
                 <Button onClick={handleMoveRight}>
                   <HiForward />
                 </Button>
-                <Button onClick={handleSwap} variant="link" className={"hover:bg-secondary"}>
-                  <HiOutlineArrowsRightLeft className={cn("text-lg transition-all duration-300",  direction === "ltr" ? "rotate-0" : "rotate-180")}/>
+                <Button
+                  onClick={handleSwap}
+                  variant="link"
+                  className={"hover:bg-secondary"}
+                >
+                  <HiOutlineArrowsRightLeft
+                    className={cn(
+                      "text-lg transition-all duration-300",
+                      direction === "ltr" ? "rotate-0" : "rotate-180"
+                    )}
+                  />
                 </Button>
               </div>
             </div>
