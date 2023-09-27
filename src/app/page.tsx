@@ -301,7 +301,7 @@ export default function Home() {
                 min={0}
                 defaultValue={[0, 100]}
                 max={100}
-                className="w-full"
+                className="w-5/6"
               />
               <div className="flex space-x-6">
                 <Toggle onClick={() => setLoop(!loop)}>
