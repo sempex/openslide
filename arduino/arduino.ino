@@ -1,9 +1,15 @@
+#include <AccelStepper.h>
+
 const byte MAXIMUM_INPUT_LENGTH = 15;
+const int  MAX_STEPS = 3000;
 const char PKG_START = '<';
 const char PKG_END = '>';
 const char PKG_COMM_DELIMITER = ':';
 const char PKG_DATA_DELIMITER = ',';
 const char PKG_KEY_VALUE_DELIMITER = '=';
+
+#define stepPin 5
+#define dirPin 4
 
 String input = "";
 
@@ -15,16 +21,21 @@ struct Message
   int dataCount;
 };
 
+AccelStepper stepper(AccelStepper::DRIVER, stepPin, dirPin);
+
 void setup()
 {
   Serial.begin(9600);
   Serial.println("<CONN:v=1,name=OpenSlide>");
+
+  stepper.setMaxSpeed(1000.0);
+  stepper.setAcceleration(200.0);
 }
 
 void loop()
 {
   input = "";
-
+  stepper.run();
   bool startMarkerFound = false; // Flag to track whether the start marker is found
 
   // Wait for the start marker
@@ -66,7 +77,19 @@ void loop()
     }
     else if (res.type == "MOVE")
     {
-      Serial.println("<OK:will move=19>");
+      int start = res.values[0].toInt();
+      int end = res.values[1].toInt();
+
+      start = map(start, 0, 100, 0, MAX_STEPS);
+      end = map(end, 0, 100, 0, MAX_STEPS);
+      
+      stepper.moveTo(start);
+      
+      char buffer[30];
+      
+      sprintf(buffer, "<OK:will move=%d>", start);
+      
+      Serial.println(buffer);
     }
     else if (res.type == "GET")
     {
