@@ -1,5 +1,10 @@
 #include <AccelStepper.h>
 
+#define stepPin 5
+#define dirPin 4
+#define btnOne 13
+#define btnTwo 14
+
 const byte MAXIMUM_INPUT_LENGTH = 15;
 const int  MAX_STEPS = 3000;
 const char PKG_START = '<';
@@ -7,11 +12,6 @@ const char PKG_END = '>';
 const char PKG_COMM_DELIMITER = ':';
 const char PKG_DATA_DELIMITER = ',';
 const char PKG_KEY_VALUE_DELIMITER = '=';
-
-#define stepPin 5
-#define dirPin 4
-#define btnOne 14 
-#define btnTwo 13
 
 String input = "";
 
@@ -22,59 +22,59 @@ struct Message
   String values[10]; // Adjust the size according to your needs
   int dataCount;
 };
-int offset = 10;
+
+
 int start = 0;
 int end = 0;
+
 AccelStepper stepper(AccelStepper::DRIVER, stepPin, dirPin);
 
 
 void calibrate() {
-  while (digitalRead(btnOne) == HIGH || digitalRead(btnTwo) == HIGH) {    
-    if (!stepper.run()) {
-      stepper.move(1);
-      start ++;
-    }
-  };
+  stepper.moveTo(20000);
+  while (digitalRead(btnOne) == HIGH) {
+    stepper.run();
+    yield();
+  }
 
-  while (digitalRead(btnTwo) == HIGH || digitalRead(btnOne) == HIGH){
-    if (!stepper.run()) {
-      stepper.move(-1);
-      end ++;
-    }
-  };
-  end = end - offset;
-  start = start - offset;
+  stepper.setCurrentPosition(0);
+  stepper.moveTo(-20000);
+  while (digitalRead(btnTwo) == HIGH) {
+    stepper.run();
+    yield();
+  }
+  end = stepper.currentPosition();
+  goTo(50);
   Serial.println("<OK:Endposition=set>");
   Serial.println("<OK:Startposition=set>");
+  
 }
 
-void setup()
-{
+void setup() {
   Serial.begin(9600);
-  Serial.println("<CONN:v=1,name=OpenSlide>");
-
-  stepper.setMaxSpeed(1000.0);
-  stepper.setAcceleration(200.0);
+  stepper.setMaxSpeed(1000);
+  stepper.setAcceleration(4000);
+  for (int i=0; i < 10; i++) {
+    Serial.println("<CONN:v=1,name=OpenSlide>");
+    delay(1000);
+  }
   pinMode(btnOne, INPUT);
   pinMode(btnTwo, INPUT);
-  calibrate();
-
 }
-
 
 void goTo(int persPos) {
   persPos = map(persPos, 0, 100, start, end);
   stepper.moveTo(persPos);
-  while (stepper.run()) {
-    Serial.println("<OK:step=sister>");
-  };
+  while (stepper.distanceToGo() != 0) {
+    stepper.run();  // Add a small delay to avoid busy-waiting
+    yield();
+  }
 }
 
 
 void loop()
 {
   input = "";
-  stepper.run();
   bool startMarkerFound = false; // Flag to track whether the start marker is found
 
   // Wait for the start marker
@@ -112,13 +112,17 @@ void loop()
 
     if (res.type == "CONN")
     {
-      Serial.println("<CONN:v=1,name=OpenSlide>");
+      Serial.println("<CONN:v=2,name=OpenSlide>");
+    }
+    else if (res.type == "CALIBRATE") {
+      calibrate();
+      Serial.println("<OK:Calibrated>");
     }
     else if (res.type == "MOVE")
     {
       int start = res.values[0].toInt();
       int end = res.values[1].toInt();
-      
+
       goTo(start);
       delay(1000);
       goTo(end);
@@ -200,6 +204,6 @@ Message parse(const String &input)
       break; // Maximum number of key-value pairs reached
     }
   }
-
   return message;
 }
+
