@@ -191,6 +191,15 @@ export default function Home() {
     setConnected(false);
   };
 
+  const calibrate = () => {
+    handleSend({
+      type: "CALIBRATE",
+      data: {
+        calibrate: true
+      }
+    })
+  }
+
   const handleAddLogs = (message: string, type: "sent" | "received") => {
     setLogs((logs) => [
       ...logs,
@@ -251,20 +260,23 @@ export default function Home() {
               {connected ? "Connected" : "Disconnected"}
             </span>
           </div>
-          <Button
-            onClick={connect}
-            disabled={connected}
-            variant={"secondary"}
-            className="drop-shadow-md"
-          >
-            {loadingConnect ? (
-              <Loader2 className="animate-spin w-3 h-3" />
-            ) : connected ? (
-              <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
-            ) : (
-              <PiPlugsLight className="text-white text-xl stroke-2" />
-            )}
-          </Button>
+          <div className="space-x-3">
+            <Button
+              onClick={connect}
+              disabled={connected}
+              variant={"secondary"}
+              className="drop-shadow-md"
+            >
+              {loadingConnect ? (
+                <Loader2 className="animate-spin w-3 h-3" />
+              ) : connected ? (
+                <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
+              ) : (
+                <PiPlugsLight className="text-white text-xl stroke-2" />
+              )}
+            </Button>
+            <Button className="drop-shadow-md" onClick={calibrate}>Calibrate</Button>
+          </div>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -292,7 +304,7 @@ export default function Home() {
             <div className="flex flex-col items-center space-y-6 w-full">
               <CardHeader className="p-0 relative">
                 {/* <CardDescription>controll slider position</CardDescription> */}
-                <Image src={SliderImage} alt="Slider"  />
+                <Image src={SliderImage} alt="Slider" />
                 <div className="bg-gradient-to-t from-background absolute inset-0"></div>
               </CardHeader>
               <Slider
