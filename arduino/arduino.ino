@@ -5,7 +5,7 @@
 #define btnOne 13
 #define btnTwo 14
 
-const byte MAXIMUM_INPUT_LENGTH = 15;
+const byte MAXIMUM_INPUT_LENGTH = 50;
 const int  MAX_STEPS = 3000;
 const char PKG_START = '<';
 const char PKG_END = '>';
