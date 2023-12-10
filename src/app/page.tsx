@@ -20,6 +20,7 @@ import {
   HiBackward,
   HiArrowPathRoundedSquare,
   HiOutlineArrowsRightLeft,
+  HiMiniScale,
 } from "react-icons/hi2";
 import {
   Card,
@@ -195,10 +196,10 @@ export default function Home() {
     handleSend({
       type: "CALIBRATE",
       data: {
-        calibrate: true
-      }
-    })
-  }
+        calibrate: true,
+      },
+    });
+  };
 
   const handleAddLogs = (message: string, type: "sent" | "received") => {
     setLogs((logs) => [
@@ -275,7 +276,10 @@ export default function Home() {
                 <PiPlugsLight className="text-white text-xl stroke-2" />
               )}
             </Button>
-            <Button className="drop-shadow-md" onClick={calibrate}>Calibrate</Button>
+            <Button className="drop-shadow-md" onClick={calibrate}>
+              <HiMiniScale className="mr-2 text-xl" />
+              Calibrate
+            </Button>
           </div>
         </div>
         <DropdownMenu>
