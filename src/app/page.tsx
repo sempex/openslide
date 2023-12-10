@@ -260,7 +260,7 @@ export default function Home() {
               {connected ? "Connected" : "Disconnected"}
             </span>
           </div>
-          <div className="space-x-3">
+          <div className="flex gap-2">
             <Button
               onClick={connect}
               disabled={connected}
