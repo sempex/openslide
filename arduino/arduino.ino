@@ -31,6 +31,8 @@ AccelStepper stepper(AccelStepper::DRIVER, stepPin, dirPin);
 
 
 void calibrate() {
+  stepper.setMaxSpeed(750);
+  stepper.setAcceleration(4000);
   stepper.moveTo(20000);
   while (digitalRead(btnOne) == HIGH) {
     stepper.run();
@@ -52,12 +54,8 @@ void calibrate() {
 
 void setup() {
   Serial.begin(9600);
-  stepper.setMaxSpeed(1000);
+  stepper.setMaxSpeed(750);
   stepper.setAcceleration(4000);
-  for (int i=0; i < 10; i++) {
-    Serial.println("<CONN:v=1,name=OpenSlide>");
-    delay(1000);
-  }
   pinMode(btnOne, INPUT);
   pinMode(btnTwo, INPUT);
 }
@@ -112,7 +110,7 @@ void loop()
 
     if (res.type == "CONN")
     {
-      Serial.println("<CONN:v=2,name=OpenSlide>");
+      Serial.println("<CONN:v=1,name=OpenSlide>");
     }
     else if (res.type == "CALIBRATE") {
       calibrate();
@@ -138,14 +136,18 @@ void loop()
       Serial.println("<OK:pos=19>");
     }
     else if (res.type == "SPEED") {
-      int speed = map(res.values[0].toInt(), 0, 100, 0, 1500);
-      stepper.setSpeed(speed);
+      int speed = map(res.values[0].toInt(), 0, 100, 5, 3000);
+      stepper.setMaxSpeed(speed);
+      stepper.setAcceleration(speed * 4);
     }
-    else if (res.type == "SET")
+    else if (res.type == "MOVEL")
     {
-      Serial.println("<OK:pos=19>");
+      int position = stepper.currentPosition();
+      position = position + end * (res.values[0].toInt() / 10);
+      goTo(position);
+
     }
-    else if (res.type == "STOP")
+    else if (res.type == "MOVER")
     {
       Serial.println("<OK:pos=19>");
     }

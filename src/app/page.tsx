@@ -124,18 +124,18 @@ export default function Home() {
     if (!reader) return;
 
     try {
-      const connected = await pTimeout(
-        listen(reader, {
-          returnOn: "CONN",
-        }),
-        {
-          milliseconds: 5000,
-        }
-      );
-      console.log(connected?.data);
+      // const connected = await pTimeout(
+      //   listen(reader, {
+      //     returnOn: "CONN",
+      //   }),
+      //   {
+      //     milliseconds: 5000,
+      //   }
+      // );
+      // console.log(connected?.data);
       setLoadingConnect(false);
       setConnected(true);
-      setDevice(connected);
+      // setDevice();kc^
     } catch {
       console.log("no connection");
       setPort(null);
@@ -151,12 +151,13 @@ export default function Home() {
     });
   };
 
-  const handleSend = async (message: Message) => {
-    if (!port) return;
+  const handleSend = async (message: Message, prt?: SerialPort) => {
+    const currentPort = prt ? prt : port;
+    if (!currentPort) return;
     const { type, data } = message;
     // Modify your message to include the start and end markers
     send(
-      port,
+      currentPort,
       {
         type: type,
         data: data,
@@ -165,11 +166,11 @@ export default function Home() {
     );
   };
   const handleMoveRight = () => {
-    const newPos = { start: position[0], end: position[1] + 2 };
+    const newPos = { start: position[0] + 2, end: position[1] };
     setPosition([newPos.start, newPos.end]);
     handleSend({
-      type: "MOVE",
-      data: newPos,
+      type: "MOVER",
+      data: {"distance": 2},
     });
   };
 
@@ -177,8 +178,8 @@ export default function Home() {
     const newPos = { start: position[0] - 2, end: position[1] };
     setPosition([newPos.start, newPos.end]);
     handleSend({
-      type: "MOVE",
-      data: newPos,
+      type: "MOVEL",
+      data: {"distance": 2},
     });
   };
 
@@ -333,7 +334,7 @@ export default function Home() {
                     className={cn("text-xl", loop && "text-primary")}
                   />
                 </Toggle>
-                <Button>
+                <Button onClick={handleMoveLeft}>
                   <HiBackward />
                 </Button>
                 <Button
