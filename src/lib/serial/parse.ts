@@ -16,7 +16,8 @@ export type MessageType =
   | "CONN"
   | "DISCONN"
   | "MOVE"
-  | "CALIBRATE";
+  | "CALIBRATE"
+  | "SPEED";
 
 export default function parse(input: string): Message {
   const type = input.split(PKG_COMM_DELIMITER)[0];

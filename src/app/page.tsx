@@ -56,6 +56,7 @@ import { Loader2 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import SliderImage from "../../cad/renders/v4.png";
 import Image from "next/image";
+import {useDebouncedCallback} from "use-debounce"
 
 const TEMPLATES: RadioItem[] = [
   {
@@ -200,6 +201,13 @@ export default function Home() {
       },
     });
   };
+
+  const debounced = useDebouncedCallback( (speed:number) =>
+    handleSend({type: "SPEED", data: {speed}}),
+    300
+  )
+
+
 
   const handleAddLogs = (message: string, type: "sent" | "received") => {
     setLogs((logs) => [
@@ -359,7 +367,10 @@ export default function Home() {
             <div className="flex items-center flex-col w-24">
               <div>{speed} cm/s</div>
               <Slider
-                onValueChange={(v) => setSpeed(v)}
+                onValueChange={(v) => {
+                  setSpeed(v)
+                  debounced(v[0])
+                }}
                 orientation="vertical"
                 value={speed}
                 min={0}
