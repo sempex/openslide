@@ -2,8 +2,8 @@
 
 #define stepPin 5
 #define dirPin 4
-#define btnOne 13
-#define btnTwo 14
+#define btnOne 14
+#define btnTwo 13
 
 const byte MAXIMUM_INPUT_LENGTH = 50;
 const int  MAX_STEPS = 3000;
@@ -136,6 +136,10 @@ void loop()
     else if (res.type == "GET")
     {
       Serial.println("<OK:pos=19>");
+    }
+    else if (res.type == "SPEED") {
+      int speed = map(res.values[0].toInt(), 0, 100, 0, 1500);
+      stepper.setSpeed(speed);
     }
     else if (res.type == "SET")
     {
