@@ -31,7 +31,7 @@ AccelStepper stepper(AccelStepper::DRIVER, stepPin, dirPin);
 
 
 void calibrate() {
-  stepper.setMaxSpeed(750);
+  stepper.setMaxSpeed(400);
   stepper.setAcceleration(4000);
   stepper.moveTo(20000);
   while (digitalRead(btnOne) == HIGH) {
@@ -61,12 +61,22 @@ void setup() {
 }
 
 void goTo(int persPos) {
-  persPos = map(persPos, 0, 100, start, end);
+  persPos = map(persPos, 0, 100, start - 100, end +100);
+  
+  stepper.stop();
   stepper.moveTo(persPos);
+  
   while (stepper.distanceToGo() != 0) {
     stepper.run();  // Add a small delay to avoid busy-waiting
     yield();
   }
+}
+
+void emergencyOut(){
+  if (digitalRead(btnTwo) == LOW || digitalRead(btnOne) == LOW) {
+    stepper.stop();
+    Serial.println("<ERROR:message=Unexpected endpoint hit!>");
+  }  
 }
 
 
@@ -212,4 +222,3 @@ Message parse(const String &input)
   }
   return message;
 }
-
