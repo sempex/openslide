@@ -15,7 +15,11 @@ export type MessageType =
   | "CUR_POS"
   | "CONN"
   | "DISCONN"
-  | "MOVE";
+  | "MOVE"
+  | "CALIBRATE"
+  | "SPEED"
+  | "MOVEL"
+  | "MOVER";
 
 export default function parse(input: string): Message {
   const type = input.split(PKG_COMM_DELIMITER)[0];

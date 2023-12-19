@@ -20,6 +20,7 @@ import {
   HiBackward,
   HiArrowPathRoundedSquare,
   HiOutlineArrowsRightLeft,
+  HiMiniScale,
 } from "react-icons/hi2";
 import {
   Card,
@@ -55,6 +56,7 @@ import { Loader2 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import SliderImage from "../../cad/renders/v4.png";
 import Image from "next/image";
+import {useDebouncedCallback} from "use-debounce"
 
 const TEMPLATES: RadioItem[] = [
   {
@@ -122,18 +124,18 @@ export default function Home() {
     if (!reader) return;
 
     try {
-      const connected = await pTimeout(
-        listen(reader, {
-          returnOn: "CONN",
-        }),
-        {
-          milliseconds: 5000,
-        }
-      );
-      console.log(connected?.data);
+      // const connected = await pTimeout(
+      //   listen(reader, {
+      //     returnOn: "CONN",
+      //   }),
+      //   {
+      //     milliseconds: 5000,
+      //   }
+      // );
+      // console.log(connected?.data);
       setLoadingConnect(false);
       setConnected(true);
-      setDevice(connected);
+      // setDevice();kc^
     } catch {
       console.log("no connection");
       setPort(null);
@@ -149,12 +151,13 @@ export default function Home() {
     });
   };
 
-  const handleSend = async (message: Message) => {
-    if (!port) return;
+  const handleSend = async (message: Message, prt?: SerialPort) => {
+    const currentPort = prt ? prt : port;
+    if (!currentPort) return;
     const { type, data } = message;
     // Modify your message to include the start and end markers
     send(
-      port,
+      currentPort,
       {
         type: type,
         data: data,
@@ -163,11 +166,11 @@ export default function Home() {
     );
   };
   const handleMoveRight = () => {
-    const newPos = { start: position[0], end: position[1] + 2 };
+    const newPos = { start: position[0] + 2, end: position[1] };
     setPosition([newPos.start, newPos.end]);
     handleSend({
-      type: "MOVE",
-      data: newPos,
+      type: "MOVER",
+      data: {"distance": 2},
     });
   };
 
@@ -175,8 +178,8 @@ export default function Home() {
     const newPos = { start: position[0] - 2, end: position[1] };
     setPosition([newPos.start, newPos.end]);
     handleSend({
-      type: "MOVE",
-      data: newPos,
+      type: "MOVEL",
+      data: {"distance": 2},
     });
   };
 
@@ -190,6 +193,22 @@ export default function Home() {
     setPort(null);
     setConnected(false);
   };
+
+  const calibrate = () => {
+    handleSend({
+      type: "CALIBRATE",
+      data: {
+        calibrate: true,
+      },
+    });
+  };
+
+  const debounced = useDebouncedCallback( (speed:number) =>
+    handleSend({type: "SPEED", data: {speed}}),
+    300
+  )
+
+
 
   const handleAddLogs = (message: string, type: "sent" | "received") => {
     setLogs((logs) => [
@@ -251,20 +270,26 @@ export default function Home() {
               {connected ? "Connected" : "Disconnected"}
             </span>
           </div>
-          <Button
-            onClick={connect}
-            disabled={connected}
-            variant={"secondary"}
-            className="drop-shadow-md"
-          >
-            {loadingConnect ? (
-              <Loader2 className="animate-spin w-3 h-3" />
-            ) : connected ? (
-              <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
-            ) : (
-              <PiPlugsLight className="text-white text-xl stroke-2" />
-            )}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={connect}
+              disabled={connected}
+              variant={"secondary"}
+              className="drop-shadow-md"
+            >
+              {loadingConnect ? (
+                <Loader2 className="animate-spin w-3 h-3" />
+              ) : connected ? (
+                <PiPlugsConnectedLight className="text-white text-xl stroke-2" />
+              ) : (
+                <PiPlugsLight className="text-white text-xl stroke-2" />
+              )}
+            </Button>
+            <Button className="drop-shadow-md" onClick={calibrate}>
+              <HiMiniScale className="mr-2 text-xl" />
+              Calibrate
+            </Button>
+          </div>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -292,7 +317,7 @@ export default function Home() {
             <div className="flex flex-col items-center space-y-6 w-full">
               <CardHeader className="p-0 relative">
                 {/* <CardDescription>controll slider position</CardDescription> */}
-                <Image src={SliderImage} alt="Slider"  />
+                <Image src={SliderImage} alt="Slider" />
                 <div className="bg-gradient-to-t from-background absolute inset-0"></div>
               </CardHeader>
               <Slider
@@ -309,7 +334,7 @@ export default function Home() {
                     className={cn("text-xl", loop && "text-primary")}
                   />
                 </Toggle>
-                <Button>
+                <Button onClick={handleMoveLeft}>
                   <HiBackward />
                 </Button>
                 <Button
@@ -343,7 +368,10 @@ export default function Home() {
             <div className="flex items-center flex-col w-24">
               <div>{speed} cm/s</div>
               <Slider
-                onValueChange={(v) => setSpeed(v)}
+                onValueChange={(v) => {
+                  setSpeed(v)
+                  debounced(v[0])
+                }}
                 orientation="vertical"
                 value={speed}
                 min={0}

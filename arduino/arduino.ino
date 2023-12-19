@@ -1,4 +1,12 @@
-const byte MAXIMUM_INPUT_LENGTH = 15;
+#include <AccelStepper.h>
+
+#define stepPin 5
+#define dirPin 4
+#define btnOne 14
+#define btnTwo 13
+
+const byte MAXIMUM_INPUT_LENGTH = 50;
+const int  MAX_STEPS = 3000;
 const char PKG_START = '<';
 const char PKG_END = '>';
 const char PKG_COMM_DELIMITER = ':';
@@ -15,16 +23,56 @@ struct Message
   int dataCount;
 };
 
-void setup()
-{
-  Serial.begin(9600);
-  Serial.println("<CONN:v=1,name=OpenSlide>");
+
+int start = 0;
+int end = 0;
+
+AccelStepper stepper(AccelStepper::DRIVER, stepPin, dirPin);
+
+
+void calibrate() {
+  stepper.setMaxSpeed(750);
+  stepper.setAcceleration(4000);
+  stepper.moveTo(20000);
+  while (digitalRead(btnOne) == HIGH) {
+    stepper.run();
+    yield();
+  }
+
+  stepper.setCurrentPosition(0);
+  stepper.moveTo(-20000);
+  while (digitalRead(btnTwo) == HIGH) {
+    stepper.run();
+    yield();
+  }
+  end = stepper.currentPosition();
+  goTo(50);
+  Serial.println("<OK:Endposition=set>");
+  Serial.println("<OK:Startposition=set>");
+  
 }
+
+void setup() {
+  Serial.begin(9600);
+  stepper.setMaxSpeed(750);
+  stepper.setAcceleration(4000);
+  pinMode(btnOne, INPUT);
+  pinMode(btnTwo, INPUT);
+}
+
+void goTo(int persPos) {
+  persPos = map(persPos, 0, 100, start, end);
+  stepper.moveTo(persPos);
+  while (stepper.distanceToGo() != 0) {
+    stepper.run();  // Add a small delay to avoid busy-waiting
+    yield();
+  }
+}
+
 
 void loop()
 {
   input = "";
-
   bool startMarkerFound = false; // Flag to track whether the start marker is found
 
   // Wait for the start marker
@@ -64,19 +112,42 @@ void loop()
     {
       Serial.println("<CONN:v=1,name=OpenSlide>");
     }
+    else if (res.type == "CALIBRATE") {
+      calibrate();
+      Serial.println("<OK:Calibrated>");
+    }
     else if (res.type == "MOVE")
     {
-      Serial.println("<OK:will move=19>");
+      int start = res.values[0].toInt();
+      int end = res.values[1].toInt();
+
+      goTo(start);
+      delay(1000);
+      goTo(end);
+      
+      char buffer[30];
+      
+      sprintf(buffer, "<OK:will move=%d>", start);
+      
+      Serial.println(buffer);
     }
     else if (res.type == "GET")
     {
       Serial.println("<OK:pos=19>");
     }
-    else if (res.type == "SET")
-    {
-      Serial.println("<OK:pos=19>");
+    else if (res.type == "SPEED") {
+      int speed = map(res.values[0].toInt(), 0, 100, 5, 3000);
+      stepper.setMaxSpeed(speed);
+      stepper.setAcceleration(speed * 4);
     }
-    else if (res.type == "STOP")
+    else if (res.type == "MOVEL")
+    {
+      int position = stepper.currentPosition();
+      position = position + end * (res.values[0].toInt() / 10);
+      goTo(position);
+
+    }
+    else if (res.type == "MOVER")
     {
       Serial.println("<OK:pos=19>");
     }
@@ -139,6 +210,6 @@ Message parse(const String &input)
       break; // Maximum number of key-value pairs reached
     }
   }
-
   return message;
 }
+
