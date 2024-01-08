@@ -31,7 +31,7 @@ OpenSlide is an Open-Source Camera Slider build with cost effective and well ava
     To attach various components, we need various screws and hot glue, among other things. We already had these utensils on hand.
 
 ## 3D Printing
-Print the parts form the cat/renders/ Folder of the GitHub Project
+Print the parts form the `cat/renders/` Folder of the GitHub Project
 
 ## Build
 ### Connect Arduino with Motor 
@@ -61,7 +61,7 @@ Assemble the Rest of the parts using the Image of the Slider.
 
 ## User Interface
 
-You can use our user Interface deployed on [openslide.vercel.app](openslide.vercel.app) or deploy it yourself using the node Application in /src directory.
+You can use our user Interface deployed on [openslide.vercel.app](openslide.vercel.app) or deploy it yourself using the node Application in `/src` directory.
 
 
 Start using the Slider. Enjoy the Experiance.
