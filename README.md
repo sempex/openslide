@@ -31,7 +31,7 @@ OpenSlide is an Open-Source Camera Slider build with cost effective and well ava
     To attach various components, we need various screws and hot glue, among other things. We already had these utensils on hand.
 
 ## 3D Printing
-Print the parts form the /renders Folder of the GitHub Project
+Print the parts form the cat/renders/ Folder of the GitHub Project
 
 ## Build
 ### Connect Arduino with Motor 
