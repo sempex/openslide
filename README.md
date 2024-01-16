@@ -5,7 +5,7 @@ OpenSlide is an Open-Source Camera Slider build with cost effective and well ava
 ![](public/v3.png)
 
 # How to build your own OpenSlide
-Here is a basic overview on how to build your own slider. For more detailed instructions view the german (docs)[./doc.pdf] of the project.
+Here is a basic overview on how to build your own slider. For more detailed instructions view the german [docs](doc.pdf) of the project.
 
 ## Item list
 
